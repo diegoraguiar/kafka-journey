@@ -1,0 +1,48 @@
+version: '2.4'
+
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: 'bitnami/kafka'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:19092,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:19092,EXTERNAL://localhost:9092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+
+  kafka_manager:
+    hostname: manager
+    image: 'kafkamanager/kafka-manager'
+    ports:
+      - '9000:9000'
+    restart: on-failure  
+    environment:
+      - ZK_HOSTS=zookeeper:2181
+    depends_on:
+      - zookeeper
+      - kafka
+
+  kowl:
+    hostname: kowl
+    image: 'quay.io/cloudhut/kowl:v1.1.0'
+    ports:
+      - '8080:8080'
+    restart: on-failure
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+    volumes:
+      - ./config.yaml:/etc/kowl/config.yaml
+    depends_on:
+     - kafka
