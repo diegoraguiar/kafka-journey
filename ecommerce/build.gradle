@@ -10,8 +10,12 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    compileOnly 'org.projectlombok:lombok:1.18.8'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+
     compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.6.0'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.3'
+
+    compile group: 'org.kohsuke', name: 'wordnet-random-name', version: '1.3'
 }
