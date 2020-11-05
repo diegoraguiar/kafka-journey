@@ -9,31 +9,65 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
 
   kafka:
+    hostname: kafka
     image: 'bitnami/kafka'
     ports:
       - '9092:9092'
     environment:
-      - KAFKA_BROKER_ID=1
+      - KAFKA_BROKER_ID=0
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CLIENT://:19092,EXTERNAL://:9092
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:19092,EXTERNAL://localhost:9092
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
 
-  kafka_manager:
-    hostname: manager
-    image: 'kafkamanager/kafka-manager'
-    ports:
-      - '9000:9000'
-    restart: on-failure  
-    environment:
-      - ZK_HOSTS=zookeeper:2181
-    depends_on:
-      - zookeeper
-      - kafka
+  # uncomment the following lines to run kafka in cluster mode
+  # kafka1:
+  #   hostname: kafka1
+  #   image: 'bitnami/kafka'
+  #   ports:
+  #     - '9093:9092'
+  #   environment:
+  #     - KAFKA_BROKER_ID=1
+  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+  #     - KAFKA_CFG_LISTENERS=CLIENT://:19092,EXTERNAL://:9092
+  #     - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka1:19092,EXTERNAL://localhost:9092
+  #     - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+  #     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #   depends_on:
+  #     - zookeeper
+
+  # kafka2:
+  #   hostname: kafka2
+  #   image: 'bitnami/kafka'
+  #   ports:
+  #     - '9094:9092'
+  #   environment:
+  #     - KAFKA_BROKER_ID=2
+  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+  #     - KAFKA_CFG_LISTENERS=CLIENT://:19092,EXTERNAL://:9092
+  #     - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka2:19092,EXTERNAL://localhost:9092
+  #     - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+  #     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #   depends_on:
+  #     - zookeeper
+
+  # kafka_manager:
+  #   hostname: manager
+  #   image: 'kafkamanager/kafka-manager'
+  #   ports:
+  #     - '9000:9000'
+  #   restart: on-failure
+  #   environment:
+  #     - ZK_HOSTS=zookeeper:2181
+  #   depends_on:
+  #     - zookeeper
+  #     - kafka
 
   kowl:
     hostname: kowl
@@ -46,3 +80,5 @@ services:
       - ./config.yaml:/etc/kowl/config.yaml
     depends_on:
      - kafka
+    #  - kafka1
+    #  - kafka2
