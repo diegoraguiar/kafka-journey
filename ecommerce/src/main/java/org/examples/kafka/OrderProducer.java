@@ -18,8 +18,10 @@ public class OrderProducer {
     String key = UUID.randomUUID().toString();
     String value = new RandomNameGenerator().next();
     KafkaProducer<String, String> producer = new KafkaProducer<>(getProperties());
-    ProducerRecord<String, String> record = new ProducerRecord<>("orders", key, value);
-    producer.send(record, MessageCallback()).get();
+    ProducerRecord<String, String> order = new ProducerRecord<>("orders", key, value);
+    ProducerRecord<String, String> orderConfirmation = new ProducerRecord<>("orders_confirmation", key, value);
+    producer.send(order, MessageCallback()).get();
+    producer.send(orderConfirmation, MessageCallback()).get();
   }
 
   private static Callback MessageCallback() {
