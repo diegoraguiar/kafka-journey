@@ -21,7 +21,7 @@ public class AuditConsumer {
       ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(2L));
       records.forEach(record -> {
         log.info(String.format("Message received: %s", record.key()));
-        log.info(String.format("Topic %s, Partition %s, Offset: %s", record.topic(), record.partition(),record.offset()));
+        log.info(String.format("Topic %s, Partition %s, Offset: %s", record.topic(), record.partition(), record.offset()));
         log.info(String.format("Message: %s", record.value()));
       });
     }

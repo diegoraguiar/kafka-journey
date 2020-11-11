@@ -30,8 +30,7 @@ public class OrderProducer {
         log.error("Message was not delivered. Exception: ", exception);
         return;
       }
-      log.info(String.format("Message delivered. Topic: %s, Partition: %s", metadata.topic(),
-          metadata.partition()));
+      log.info(String.format("Message delivered. Topic: %s, Partition: %s", metadata.topic(), metadata.partition()));
     };
   }
 
