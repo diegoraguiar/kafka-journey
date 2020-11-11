@@ -9,19 +9,17 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.UUIDSerializer;
 import org.kohsuke.randname.RandomNameGenerator;
 
 @Slf4j
 public class OrderProducer {
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
-    final String key = UUID.randomUUID().toString();
-    final String value = new RandomNameGenerator().next();
-    final KafkaProducer<String, String> producer = new KafkaProducer<>(getProperties());
-    final ProducerRecord<String, String> order = new ProducerRecord<>("orders", key, value);
-    final ProducerRecord<String, String> orderConfirmation = new ProducerRecord<>("orders_confirmation", key, value);
-    producer.send(order, MessageCallback()).get();
-    producer.send(orderConfirmation, MessageCallback()).get();
+    final Order order = new Order(UUID.randomUUID(), new RandomNameGenerator().next());
+    final KafkaProducer<UUID, Order> producer = new KafkaProducer<>(getProperties());
+    final ProducerRecord<UUID, Order> record = new ProducerRecord<>("orders", order.getId(), order);
+    producer.send(record, MessageCallback()).get();
   }
 
   private static Callback MessageCallback() {
@@ -37,8 +35,8 @@ public class OrderProducer {
   private static Properties getProperties() {
     final Properties props = new Properties();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class.getName());
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, OrderSerializer.class.getName());
     return props;
   }
 }
