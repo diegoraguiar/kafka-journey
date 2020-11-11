@@ -1,0 +1,13 @@
+plugins {
+    id 'com.google.cloud.tools.jib' version '2.6.0'
+}
+
+jib {
+    to {
+        image = 'local/audit-consumer:local'
+    }
+    container {
+        mainClass = 'org.examples.kafka.AuditConsumer'
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+    }
+}
